@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "cross-env NODE_PATH=src nodemon --inspect src/app --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,18 @@
   "bugs": {
     "url": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS/issues"
   },
-  "homepage": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS#readme"
+  "homepage": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.17.3",
+    "@babel/core": "^7.17.4",
+    "@babel/preset-env": "^7.16.11"
+  },
+  "dependencies": {
+    "ip": "^1.1.5"
+  },
+  "babel": {
+    "presets": [
+      "@babel/env"
+    ]
+  }
 }

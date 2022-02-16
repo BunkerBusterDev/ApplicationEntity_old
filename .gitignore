@@ -1,5 +1,9 @@
 # Dependency directories
 node_modules/
+jspm_packages/
+
+# Webpack directories
+.webpack
 
 # Runtime data
 pids
@@ -24,6 +28,7 @@ lerna-debug.log*
 .env.local
 
 # yarn v2
+yarn.lock
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
@@ -33,5 +38,12 @@ lerna-debug.log*
 # Yarn Integrity file
 .yarn-integrity
 
-# Config file
+# others
+.idea
+package-lock.json
+
+.DS_STORE
+dbconfig.md
+dbconfig.1.md
+
 conf.js
