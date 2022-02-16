@@ -1,0 +1,19 @@
+{
+  "name": "bunker_ae",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BunkerBusterDev/Bunker_AE_NodeJS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS/issues"
+  },
+  "homepage": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS#readme"
+}
