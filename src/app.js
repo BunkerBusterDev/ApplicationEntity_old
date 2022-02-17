@@ -1,9 +1,9 @@
-import conf from './conf';
-import HttpCore from './http/http_core';
+import { useprotocol } from 'conf';
+import httpCore from 'http/core';
 
 // AE core
-if(conf.useprotocol === 'mqtt') {
+if(useprotocol === 'mqtt') {
     console.log('./mqtt');
 } else {
-    new HttpCore();
+    httpCore.start();
 }

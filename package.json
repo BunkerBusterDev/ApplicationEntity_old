@@ -23,7 +23,8 @@
     "@babel/preset-env": "^7.16.11"
   },
   "dependencies": {
-    "ip": "^1.1.5"
+    "ip": "^1.1.5",
+    "shortid": "^2.2.16"
   },
   "babel": {
     "presets": [
