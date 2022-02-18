@@ -23,7 +23,9 @@
     "@babel/preset-env": "^7.16.11"
   },
   "dependencies": {
+    "http": "^0.0.1-security",
     "ip": "^1.1.5",
+    "koa": "^2.13.4",
     "shortid": "^2.2.16"
   },
   "babel": {

@@ -16,7 +16,7 @@ wdt.on('watchdog', () => {
     for (let id in wdt_value_q) {
         if(wdt_value_q.hasOwnProperty(id)) {
             ++wdt_tick_q[id];
-            if((wdt_tick_q[id] % wdt_value_q[id]) == 0) {
+            if((wdt_tick_q[id] % wdt_value_q[id]) === 0) {
                 wdt_tick_q[id] = 0;
                 if(wdt_callback_q[id]) {
                     wdt_callback_q[id](id, wdt_param1_q[id], wdt_param2_q[id], wdt_param3_q[id]);

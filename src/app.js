@@ -5,5 +5,6 @@ import httpCore from 'http/core';
 if(useprotocol === 'mqtt') {
     console.log('./mqtt');
 } else {
-    httpCore.start();
+    // httpCore.start();
+    new httpCore();
 }

@@ -1,11 +1,11 @@
- var ip = require("ip");
+ let ip = require("ip");
 
- var conf = {};
- var cse = {};
- var ae = {};
- var cnt_arr = [];
- var sub_arr = [];
- var acp = {};
+ let conf = {};
+ let cse = {};
+ let ae = {};
+ let cnt_arr = [];
+ let sub_arr = [];
+ let acp = {};
  
  conf.useprotocol = 'http'; // 'http' or 'mqtt' or 'coap' or 'ws' 중 하나 선택
  
@@ -27,7 +27,7 @@
  ae.bodytype     = 'json'; // 'json' or 'xml' or 'cbor' 중 하나 선택
  
  // build cnt
- var count = 0;
+ let count = 0;
  cnt_arr[count] = {};
  cnt_arr[count].parent = '/' + cse.name + '/' + ae.name;
  cnt_arr[count++].name = 'cnt_illum';

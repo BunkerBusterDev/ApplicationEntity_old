@@ -4,7 +4,7 @@ import http from 'http';
 import { cse, ae } from 'conf';
 
 exports.httpRequest = (path, method, ty, bodyString) => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         let options = {
             hostname: cse.host,
             port: cse.port,
@@ -39,11 +39,11 @@ exports.httpRequest = (path, method, ty, bodyString) => {
     
             res.on('end', function () {
                 try {
-                    var jsonObj = JSON.parse(res_body);
+                    let jsonObj = JSON.parse(res_body);
                     resolve({res: res, res_body:jsonObj});
                 } catch (e) {
                     console.log('[http/httpRequest] json parse error]');
-                    var jsonObj = {};
+                    let jsonObj = {};
                     jsonObj.dbg = res_body;
                     resolve({res: res, res_body:jsonObj});
                 }
@@ -54,7 +54,7 @@ exports.httpRequest = (path, method, ty, bodyString) => {
             reject(`[httpRequest] : problem with request: ${e.message}`);
         });
     
-        req.write(bodyString);
+        await req.write(bodyString);
         req.end();
     });
 }

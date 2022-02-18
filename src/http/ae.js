@@ -13,23 +13,55 @@ exports.createAE = () => {
         results_ae['m2m:ae'].rr = true;
     
         bodyString = JSON.stringify(results_ae);
-
         try {
             const { res, res_body } = await httpRequest(ae.parent, 'post', '2', bodyString);
-            const status = res.headers['x-m2m-rsc'];        
-            if (status == 2001) {
-                ae_response_action(status, res_body, function (status, aeid) {
-                    console.log(`x-m2m-rsc : ${status} - ${aeid} <----`);
-                    state = 'create_cnt';
-                    request_count = 0;
-                    return_count = 0;
-                });
+            const status = res.headers['x-m2m-rsc'];
+            if (status === '2001') {
+                ae.id = res_body['m2m:ae']['aei'];
+
+                console.log(`x-m2m-rsc : ${status} - ${ae.id} <----`);
+                state = 'create_cnt';
+                resolve({state: state});
             }
-            else if (status == 5106 || status == 4105) {
+            else if (status === '5106' || status === '4105') {
                 console.log(`x-m2m-rsc : ${status} <----`);
                 state = 'retrieve_ae'
+                resolve({state: state});
             }
-            resolve({state: state});
+
+        } catch (e) {
+            reject(e);
+        }
+    });
+}
+
+exports.retrieveAE = () => {
+    return new Promise(async (resolve, reject) => {
+        let state = '';
+
+        if (ae.id === 'S') {
+            ae.id = 'S' + shortid.generate();
+        }
+        
+        try {
+            const { res, res_body } = await httpRequest(`${ae.parent}/${ae.name}`, 'get', '', '');
+            const status = res.headers['x-m2m-rsc'];  
+
+            if (status === '2000') {
+                let aeid = res_body['m2m:ae']['aei'];
+                console.log(`x-m2m-rsc : ${status} - ${aeid} <----`);
+
+                if(ae.id != aeid && ae.id != ('/'+aeid)) {
+                    rejeact(`AE-ID created is ${aeid} not equal to device AE-ID is ${conf.ae.id}`);
+                }
+                else {
+                    state = 'create_cnt';
+                    resolve({state: state});
+                }
+            }
+            else {
+                reject(`x-m2m-rsc : ${status} <----`);
+            }
 
         } catch (e) {
             reject(e);
