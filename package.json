@@ -1,32 +1,26 @@
 {
-  "name": "bunker_ae",
+  "name": "adb_ae",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "main": "src/adn_ae.js",
   "scripts": {
-    "dev": "cross-env NODE_PATH=src nodemon --inspect src/app --exec babel-node",
+    "dev": "cross-env NODE_PATH=src nodemon --inspect src/adn_ae --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BunkerBusterDev/Bunker_AE_NodeJS.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS/issues"
-  },
-  "homepage": "https://github.com/BunkerBusterDev/Bunker_AE_NodeJS#readme",
+  "repository": "git@github.com:BunkerBusterDev/adn_ae-nodejs.git",
+  "author": "BunkerBusterDev <bunkerbusterdev@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.17.3",
     "@babel/core": "^7.17.4",
+    "@babel/node": "^7.16.8",
     "@babel/preset-env": "^7.16.11"
   },
   "dependencies": {
     "http": "^0.0.1-security",
     "ip": "^1.1.5",
     "koa": "^2.13.4",
-    "shortid": "^2.2.16"
+    "net": "^1.0.2",
+    "shortid": "^2.2.8"
   },
   "babel": {
     "presets": [

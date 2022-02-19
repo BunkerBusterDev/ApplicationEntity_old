@@ -1,3 +1,4 @@
+import ip from 'ip';
 import Koa from 'koa';
 import Http from 'http';
 
@@ -8,26 +9,21 @@ import HttpAe from './ae';
 import HttpCnt from './cnt';
 import HttpSub from './sub';
 
+import ThingApp from 'thing/app'
+
 export default class HttpCore {
 
     constructor() {
-        this.initState = 'create_ae';
-        wdt.set_wdt('initDevice', 2, this.initDevice);
-
         this.server = null;
+        this.app = null;
+        this.initState = 'start_httpserver';
+    }
+
+    initialize = async () => {
         this.app = new Koa();
-    }
 
-    readyForNotification = () => {
-        this.server = Http.createServer(this.app);
-        this.server.listen(ae.port, function () {
-            console.log('http_server running at ' + ae.port + ' port');
-        });
-    }
-
-    initDevice = async () => {
+        console.log(`[initState] : ${this.initState}`);
         if (this.initState === 'create_ae') {
-            console.log('[initState] : ' + this.initState);
             try {
                 const { state } = await HttpAe.createAE();
                 this.initState = state;
@@ -35,7 +31,6 @@ export default class HttpCore {
                 console.log(e);
             }
         } else if(this.initState === 'retrieve_ae') {
-            console.log('[initState] : ' + this.initState);
             try {
                 const { state } = await HttpAe.retrieveAE();
                 this.initState = state;
@@ -43,7 +38,6 @@ export default class HttpCore {
                 console.log(e);
             }
         } else if(this.initState === 'create_cnt') {
-            console.log('[initState] : ' + this.initState);
             try {
                 const { state } = await HttpCnt.createCntAll();
                 this.initState = state;
@@ -51,7 +45,6 @@ export default class HttpCore {
                 console.log(e);
             }
         } else if(this.initState === 'delete_sub') {
-            console.log('[initState] : ' + this.initState);
             try {
                 const { state } = await HttpSub.deleteSubAll();
                 this.initState = state;
@@ -59,17 +52,40 @@ export default class HttpCore {
                 console.log(e);
             }
         } else if(this.initState === 'create_sub') {
-            console.log('[initState] : ' + this.initState);
             try {
                 const { state } = await HttpSub.createSubAll();
                 this.initState = state;
             } catch (e) {
                 console.log(e);
             }
-        } else if('ready') {
-            console.log('[initState] : ' + this.initState);
-            wdt.del_wdt('initDevice');
-            this.readyForNotification();
+        } else if(this.initState === 'start_httpserver') {
+            try {
+                const { state } = await this.startHttpServer();
+                this.initState = state;
+            } catch (e) {
+                console.log(e);
+            }
+        } else if(this.initState === 'start_tcpserver') {
+            try {
+                const thingApp = new ThingApp();
+                const { state } = await thingApp.initialize();
+                this.initState = state;
+            } catch (e) {
+                console.log(e);
+            }
+        } else if(this.initState === 'ready') {
+            console.log(`ADN-AE(${ae.name}) is initialized`)
+            wdt.del_wdt('http/app/initialize');
         }
+    }
+
+    startHttpServer = () => {
+        return new Promise(async (resolve, reject) => {
+            this.server = Http.createServer(this.app);
+            this.server.listen(ae.port, function () {
+                console.log(`Http Server (${ip.address()}) for notification is listening on port ${ae.port}`)
+                resolve({state : 'start_tcpserver'});
+            });
+        });
     }
 }

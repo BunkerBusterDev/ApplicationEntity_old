@@ -1,10 +1,10 @@
-import shortid from 'shortid';
 import http from 'http';
+import shortid from 'shortid';
 
 import { cse, ae } from 'conf';
 
 exports.httpRequest = (path, method, ty, bodyString) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let options = {
             hostname: cse.host,
             port: cse.port,
@@ -42,7 +42,7 @@ exports.httpRequest = (path, method, ty, bodyString) => {
                     let jsonObj = JSON.parse(res_body);
                     resolve({res: res, res_body:jsonObj});
                 } catch (e) {
-                    console.log('[http/httpRequest] json parse error]');
+                    console.log('[http/request] json parse error]');
                     let jsonObj = {};
                     jsonObj.dbg = res_body;
                     resolve({res: res, res_body:jsonObj});
@@ -51,10 +51,10 @@ exports.httpRequest = (path, method, ty, bodyString) => {
         });
     
         req.on('error', function (e) {
-            reject(`[httpRequest] : problem with request: ${e.message}`);
+            reject(`[http/request] : problem with request: ${e.message}`);
         });
     
-        await req.write(bodyString);
+        req.write(bodyString);
         req.end();
     });
 }

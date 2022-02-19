@@ -15,7 +15,7 @@ const deleteSub = (target, count) => {
     });
 }
 
-exports.deleteSubAll = async () => {
+exports.deleteSubAll = () => {
     return new Promise(async (resolve, reject) => {
         if(return_count === 0) {
             let state = '';
@@ -76,13 +76,13 @@ const createSub = (parent, rn, nu, count) => {
     });
 }
 
-exports.createSubAll = async () => {
+exports.createSubAll = () => {
     return new Promise(async (resolve, reject) => {
         if(return_count === 0) {
             let state = '';
 
             if(sub.length === 0) {
-                state = 'ready'
+                state = 'start_httpserver'
                 resolve({state: state});
             }
             else {
@@ -101,7 +101,7 @@ exports.createSubAll = async () => {
                             if (sub.length <= count) {
                                 request_count = 0;
                                 return_count = 0;
-                                state = 'ready';
+                                state = 'start_httpserver';
                                 resolve({state: state});
                             }
                         }

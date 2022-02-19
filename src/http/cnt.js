@@ -23,7 +23,7 @@ const createCnt = (parent, rn, count) => {
     });
 }
 
-exports.createCntAll = async () => {
+exports.createCntAll = () => {
     return new Promise(async (resolve, reject) => {
         if(return_count === 0) {
             let state = '';
