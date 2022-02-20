@@ -33,8 +33,8 @@ export default class ThingApp {
                 });
             });
 
-            this.server.listen(ae.thingport, () => {
-                console.log(`TCP Server (${ip.address()}) for things is listening on port ${ae.thingport}`)
+            this.server.listen(ae.thingPort, () => {
+                console.log(`TCP Server (${ip.address()}) for things is listening on port ${ae.thingPort}`)
                 resolve({state: 'ready'});
             });
         });

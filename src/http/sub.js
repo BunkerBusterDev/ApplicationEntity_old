@@ -1,14 +1,15 @@
 import { sub } from 'conf';
-import { httpRequest } from './request';
+// import request from './request_http';
+import request from './request_axios';
 
-let return_count = 0;
+// let return_count = 0;
 let request_count = 0;
 
 const deleteSub = (target, count) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const { res, res_body } = await httpRequest(target, 'delete', '', '');
-            resolve({status: res.headers['x-m2m-rsc'], res_body: res_body, count: count});
+            const { status, res_body } = await request.delete(target);
+            resolve({status: status, res_body: res_body, count: count});
         } catch (e) {
             reject(e);
         }
@@ -17,7 +18,7 @@ const deleteSub = (target, count) => {
 
 exports.deleteSubAll = () => {
     return new Promise(async (resolve, reject) => {
-        if(return_count === 0) {
+        // if(return_count === 0) {
             let state = '';
 
             if(sub.length === 0) {
@@ -33,10 +34,10 @@ exports.deleteSubAll = () => {
                             console.log(res_body);
 
                             request_count = ++count;
-                            return_count = 0;
+                            // return_count = 0;
                             if (sub.length <= count) {
                                 request_count = 0;
-                                return_count = 0;
+                                // return_count = 0;
                                 state = 'create_sub';
                                 resolve({state: state});
                             }
@@ -46,11 +47,11 @@ exports.deleteSubAll = () => {
                     }
                 
             }
-        }
-        return_count++;
-        if(return_count >= 3) {
-            return_count = 0;
-        }
+        // }
+        // return_count++;
+        // if(return_count >= 3) {
+        //     return_count = 0;
+        // }
     });
 }
 
@@ -68,8 +69,8 @@ const createSub = (parent, rn, nu, count) => {
         bodyString = JSON.stringify(results_ss);
 
         try {
-            const { res, res_body } = await httpRequest(parent, 'post', '23', bodyString);
-            resolve({status: res.headers['x-m2m-rsc'], res_body: res_body, count: count});
+            const { status, res_body } = await request.post(parent, '23', bodyString);
+            resolve({status: status, res_body: res_body, count: count});
         } catch (e) {
             reject(e);
         }
@@ -78,7 +79,7 @@ const createSub = (parent, rn, nu, count) => {
 
 exports.createSubAll = () => {
     return new Promise(async (resolve, reject) => {
-        if(return_count === 0) {
+        // if(return_count === 0) {
             let state = '';
 
             if(sub.length === 0) {
@@ -97,10 +98,10 @@ exports.createSubAll = () => {
                             console.log(JSON.stringify(res_body));
 
                             request_count = ++count;
-                            return_count = 0;
+                            // return_count = 0;
                             if (sub.length <= count) {
                                 request_count = 0;
-                                return_count = 0;
+                                // return_count = 0;
                                 state = 'start_httpserver';
                                 resolve({state: state});
                             }
@@ -110,10 +111,10 @@ exports.createSubAll = () => {
                     }
                 
             }
-        }
-        return_count++;
-        if(return_count >= 3) {
-            return_count = 0;
-        }
+        // }
+        // return_count++;
+        // if(return_count >= 3) {
+        //     return_count = 0;
+        // }
     });
 }

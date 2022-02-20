@@ -1,5 +1,6 @@
 import { ae } from 'conf';
-import { httpRequest } from './request';
+// import request from './request_http';
+import request from './request_axios';
 
 exports.createAE = () => {
     return new Promise(async (resolve, reject) => {
@@ -8,14 +9,13 @@ exports.createAE = () => {
         let results_ae = {};
     
         results_ae['m2m:ae'] = {};
-        results_ae['m2m:ae'].api = ae.appid;
+        results_ae['m2m:ae'].api = ae.appID;
         results_ae['m2m:ae'].rn = ae.name;
         results_ae['m2m:ae'].rr = true;
     
         bodyString = JSON.stringify(results_ae);
         try {
-            const { res, res_body } = await httpRequest(ae.parent, 'post', '2', bodyString);
-            const status = res.headers['x-m2m-rsc'];
+            const { status, res_body } = await request.post(ae.parent, '2', bodyString);
             if (status === '2001') {
                 ae.id = res_body['m2m:ae']['aei'];
 
@@ -44,8 +44,7 @@ exports.retrieveAE = () => {
         }
         
         try {
-            const { res, res_body } = await httpRequest(`${ae.parent}/${ae.name}`, 'get', '', '');
-            const status = res.headers['x-m2m-rsc'];  
+            const { status, res_body } = await request.get(`${ae.parent}/${ae.name}`);
 
             if (status === '2000') {
                 let aeid = res_body['m2m:ae']['aei'];

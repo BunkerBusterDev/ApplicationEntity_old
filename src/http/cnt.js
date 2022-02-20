@@ -1,7 +1,8 @@
 import { cnt } from 'conf';
-import { httpRequest } from './request';
+// import request from './request_http';
+import request from './request_axios';
 
-let return_count = 0;
+// let return_count = 0;
 let request_count = 0;
 
 const createCnt = (parent, rn, count) => {
@@ -15,8 +16,8 @@ const createCnt = (parent, rn, count) => {
         bodyString = JSON.stringify(results_ct);
 
         try {
-            const { res, res_body } = await httpRequest(parent, 'post', '3', bodyString);
-            resolve({status: res.headers['x-m2m-rsc'], res_body: res_body, count: count});
+            const { status, res_body } = await request.post(parent, '3', bodyString);
+            resolve({status: status, res_body: res_body, count: count});
         } catch (e) {
             reject(e);
         }
@@ -25,7 +26,7 @@ const createCnt = (parent, rn, count) => {
 
 exports.createCntAll = () => {
     return new Promise(async (resolve, reject) => {
-        if(return_count === 0) {
+        // if(return_count === 0) {
             let state = '';
 
             if(cnt.length === 0) {
@@ -42,10 +43,10 @@ exports.createCntAll = () => {
                             console.log(res_body);
 
                             request_count = ++count;
-                            return_count = 0;
+                            // return_count = 0;
                             if (cnt.length <= count) {
                                 request_count = 0;
-                                return_count = 0;
+                                // return_count = 0;
                                 state = 'delete_sub';
                                 resolve({state: state});
                             }
@@ -55,10 +56,10 @@ exports.createCntAll = () => {
                     }
                 
             }
-        }
-        return_count++;
-        if(return_count >= 3) {
-            return_count = 0;
-        }
+        // }
+        // return_count++;
+        // if(return_count >= 3) {
+        //     return_count = 0;
+        // }
     });
 }
