@@ -27,11 +27,9 @@ const createCnt = (parent, rn, count) => {
 exports.createCntAll = () => {
     return new Promise(async (resolve, reject) => {
         // if(return_count === 0) {
-            let state = '';
 
             if(cnt.length === 0) {
-                state = 'delete_sub'
-                resolve({state: state});
+                resolve({state: 'delete_sub'});
             }
             else {
                 let parent = cnt[request_count].parent;
@@ -47,8 +45,7 @@ exports.createCntAll = () => {
                             if (cnt.length <= count) {
                                 request_count = 0;
                                 // return_count = 0;
-                                state = 'delete_sub';
-                                resolve({state: state});
+                                resolve({state: 'delete_sub'});
                             }
                         }
                     } catch (e) {

@@ -43,8 +43,7 @@ export default class HttpCore {
                 const { state } = await this.startHttpServer();
                 this.initState = state;
             } else if(this.initState === 'start_tcpserver') {
-                const thingApp = new ThingApp();
-                const { state } = await thingApp.initialize();
+                const { state } = await ThingApp.initialize();
                 this.initState = state;
             } else if(this.initState === 'ready') {
                 console.log(`ADN-AE(${ae.name}) is initialized`)

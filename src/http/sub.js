@@ -22,8 +22,7 @@ exports.deleteSubAll = () => {
             let state = '';
 
             if(sub.length === 0) {
-                state = 'create_sub'
-                resolve({state: state});
+                resolve({state: 'create_sub'});
             }
             else {
                 const target = `${sub[request_count].parent}/${sub[request_count].name}`;
@@ -38,8 +37,7 @@ exports.deleteSubAll = () => {
                             if (sub.length <= count) {
                                 request_count = 0;
                                 // return_count = 0;
-                                state = 'create_sub';
-                                resolve({state: state});
+                                resolve({state: 'create_sub'});
                             }
                         }
                     } catch (e) {
@@ -83,8 +81,7 @@ exports.createSubAll = () => {
             let state = '';
 
             if(sub.length === 0) {
-                state = 'start_httpserver'
-                resolve({state: state});
+                resolve({state: 'start_httpserver'});
             }
             else {
                 const parent = sub[request_count].parent;
@@ -102,8 +99,7 @@ exports.createSubAll = () => {
                             if (sub.length <= count) {
                                 request_count = 0;
                                 // return_count = 0;
-                                state = 'start_httpserver';
-                                resolve({state: state});
+                                resolve({state: 'start_httpserver'});
                             }
                         }
                     } catch (e) {
