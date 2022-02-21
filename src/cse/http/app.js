@@ -1,6 +1,5 @@
 import ip from 'ip';
 import Koa from 'koa';
-import Http from 'http';
 
 import { ae } from 'conf';
 import wdt from 'lib/wdt';
