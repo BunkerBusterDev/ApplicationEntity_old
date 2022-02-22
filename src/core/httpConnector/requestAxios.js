@@ -1,10 +1,9 @@
-import http from 'axios';
+import axios from 'axios';
 import shortid from 'shortid';
 
-import { useprotocol, cse, ae } from 'conf';
-import axios from 'axios';
+import config from 'config';
 
-axios.defaults.baseURL = `${useprotocol}://${cse.host}:${cse.port}`;
+axios.defaults.baseURL = `${config.useProtocol}://${config.commonServiceEntity.host}:${config.commonServiceEntity.port}`;
 
 const request = (path, method, ...args) => {
     return new Promise(async(resolve, reject) => {
@@ -14,8 +13,8 @@ const request = (path, method, ...args) => {
             method: method,
             headers: {
                 'X-M2M-RI': shortid.generate(),
-                'Accept': `application/${ae.bodytype}`,
-                'X-M2M-Origin': ae.id,
+                'Accept': `application/${config.applicationEntity.bodyType}`,
+                'X-M2M-Origin': config.applicationEntity.id,
                 'Locale': 'en'
             }
         };
@@ -27,12 +26,12 @@ const request = (path, method, ...args) => {
         }
 
         try {
-            const res = await axios.request(options);
-            resolve({status: res.headers['x-m2m-rsc'], res_body:res.data})
-        } catch (e) {
-            const res_error = e.response;
-            const status = res_error.headers['x-m2m-rsc'];
-            resolve({status: status, res_body:res_error.data});
+            const response = await axios.request(options);
+            resolve({status: response.headers['x-m2m-rsc'], responseBody:response.data})
+        } catch (error) {
+            const responseError = error.response;
+            const status = responseError.headers['x-m2m-rsc'];
+            resolve({status: status, responseBody:responseError.data});
         }
     });
 }
@@ -41,33 +40,33 @@ exports.get = (path) => {
     return new Promise((resolve, reject) => {
         try {
             resolve(request(path, 'get'));
-        } catch (e) {
-            reject(e)
+        } catch (error) {
+            reject(error)
         }
     });
 }
 
 exports.post = (path, ty, bodyString) => {
     return new Promise((resolve, reject) => {
-        const append_ty = (ty==='') ? '': (`; ty=${ty}`);
-        const contentType = `application/vnd.onem2m-res+${ae.bodytype}${append_ty}`;
+        const appendTY = (ty==='') ? '': (`; ty=${ty}`);
+        const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}${appendTY}`;
 
         try {
             resolve(request(path, 'post', contentType, bodyString));
-        } catch (e) {
-            reject(e)
+        } catch (error) {
+            reject(error)
         }
     });
 }
 
 exports.put = (path, bodyString) => {
     return new Promise((resolve, reject) => {
-        const contentType = `application/vnd.onem2m-res+${ae.bodytype}`;
+        const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}`;
 
         try {
             resolve(request(path, 'put', contentType, bodyString));
-        } catch (e) {
-            reject(e)
+        } catch (error) {
+            reject(error)
         }
     });
 }
@@ -77,8 +76,8 @@ exports.delete = (path) => {
 
         try {
             resolve(request(path, 'delete'));
-        } catch (e) {
-            reject(e)
+        } catch (error) {
+            reject(error)
         }
     });
 }
