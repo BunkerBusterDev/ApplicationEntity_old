@@ -9,17 +9,17 @@ import ContentInstance from 'core/httpConnector/contentInstance';
 let server = null;
 
 let socketBuffer = {};
-let dataBuffer = {};
+let thingAdationSoftwareBuffer = {};
 
 async function thingAdationSoftwareConnectorHandler(data) {
-    dataBuffer[this.id] += data.toString();
-    let dataArray = dataBuffer[this.id].split('<EOF>');
+    thingAdationSoftwareBuffer[this.id] += data.toString();
+    let dataArray = thingAdationSoftwareBuffer[this.id].split('<EOF>');
 
     if(dataArray.length >= 2) {
         for (let i=0; i<dataArray.length-1; i++) {
             let line = dataArray[i];
 
-            dataBuffer[this.id] = dataBuffer[this.id].replace(`${line}<EOF>`, '');
+            thingAdationSoftwareBuffer[this.id] = thingAdationSoftwareBuffer[this.id].replace(`${line}<EOF>`, '');
 
             let lineToJson = JSON.parse(line);
             let containerName = lineToJson.containerName;
@@ -36,7 +36,7 @@ async function thingAdationSoftwareConnectorHandler(data) {
                 if(initState === 'ready') {
                     for(let j = 0; j < config.containerArray.length; j++) {
                         if (config.containerArray[j].name === containerName) {
-                            let parent = config.containerArray[j].parent + '/' + config.containerArray[j].name;
+                            let parent = config.containerArray[j].parent + '/' + containerName;
                             try {
                                 await ContentInstance.createContentInstance(parent, content, this);
                                 break;
@@ -47,8 +47,6 @@ async function thingAdationSoftwareConnectorHandler(data) {
                     }
                 }
             }
-
-            sleep(100);
         }
     }
 }
@@ -59,7 +57,7 @@ exports.initialize = () => {
             console.log('[thingAdationSoftware/app] : thingAdationSoftware socket connected');
 
             socket.id = shortid.generate();
-            dataBuffer[socket.id] = '';
+            thingAdationSoftwareBuffer[socket.id] = '';
             
             socket.on('data', thingAdationSoftwareConnectorHandler);
             socket.on('end', function() {
