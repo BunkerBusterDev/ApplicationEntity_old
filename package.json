@@ -19,7 +19,10 @@
     "axios": "^0.26.0",
     "ip": "^1.1.5",
     "koa": "^2.13.4",
-    "shortid": "^2.2.8"
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "shortid": "^2.2.8",
+    "url": "^0.11.0"
   },
   "babel": {
     "presets": [
