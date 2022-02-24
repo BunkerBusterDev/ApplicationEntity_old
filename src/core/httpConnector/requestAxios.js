@@ -5,8 +5,8 @@ import config from 'config';
 
 axios.defaults.baseURL = `${config.useProtocol}://${config.commonServiceEntity.host}:${config.commonServiceEntity.port}`;
 
-const request = (path, method, ...args) => {
-    return new Promise(async(resolve, reject) => {
+const request = async (path, method, ...args) => {
+    return new Promise((resolve, reject) => {
 
         let options = {
             url: path,
@@ -24,15 +24,18 @@ const request = (path, method, ...args) => {
             options.headers['Content-Type'] = args[0];
             options.headers['Content-Length'] = args[1].length;
         }
-
-        try {
-            const response = await axios.request(options);
-            resolve({status: response.headers['x-m2m-rsc'], responseBody:response.data})
-        } catch (error) {
+        
+        axios.request(options).then((response) => {
+            resolve({status: response.headers['x-m2m-rsc'], responseBody:response.data});
+        }).catch ((error) => {
             const responseError = error.response;
-            const status = responseError.headers['x-m2m-rsc'];
-            resolve({status: status, responseBody:responseError.data});
-        }
+            if(responseError.headers['x-m2m-rsc'] != null) {
+                const status = responseError.headers['x-m2m-rsc'];
+                resolve({status: status, responseBody:responseError.data});
+            } else {
+                reject(error);
+            }
+        });
     });
 }
 

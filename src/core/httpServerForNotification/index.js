@@ -39,11 +39,12 @@ router.post('/:resourcename0', (ctx) => {
 });
 
 exports.start = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         try {
-            await app.listen(config.applicationEntity.port);
-            console.log(`Http Server(${ip.address()}) for notification is listening on port ${config.applicationEntity.port}`)
-            resolve({state : 'start-tcpServer'});
+            app.listen(config.applicationEntity.port).then(() => {
+                console.log(`Http Server(${ip.address()}) for notification is listening on port ${config.applicationEntity.port}`)
+                resolve({state : 'start-tcpServer'});
+            });
         } catch (error) {
             reject(`[HttpConnector/StartHttpServer] : ${error}`);
         }

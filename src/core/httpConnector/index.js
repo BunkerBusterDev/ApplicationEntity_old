@@ -6,8 +6,9 @@ import Subscription from './subscription';
 import HttpServerForNotification from 'core/httpServerForNotification'
 import ThingAdationSoftwareConnector from 'core/thingAdationSoftwareConnector'
 
-exports.initialize = async () => {
+global.initState = 'create-applicationEntity';
 
+exports.initialize = async () => {
     console.log(`[initState] : ${initState}`);
     try {
         if (initState === 'create-applicationEntity') {
@@ -35,6 +36,15 @@ exports.initialize = async () => {
             console.log(`ADN-Application-Entity(${config.applicationEntity.name}) is initialized`)
             WatchdogTimer.deleteWatchdogTimer('httpConnector/initialize');
         }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+global.restart = async () => {
+    try {
+        initState = 'create-applicationEntity';
+        await WatchdogTimer.setWatchdogTimer('httpConnector/initialize', 1, this.initialize);
     } catch (error) {
         console.log(error);
     }

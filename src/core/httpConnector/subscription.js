@@ -6,42 +6,40 @@ import request from './requestAxios';
 let requestCount = 0;
 
 const deleteSubscription = (target, count) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const { status, responseBody } = await request.delete(target);
+    return new Promise((resolve, reject) => {
+        request.delete(target).then((status, responseBody) => {
             resolve({status: status, responseBody: responseBody, count: count});
-        } catch (error) {
+        }).catch ((error) => {
             reject(error);
-        }
+        });
     });
 }
 
 exports.deleteSubscriptionAll = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         // if(returnCount === 0) {
             if(config.subscriptionArray.length === 0) {
                 resolve({state: 'create-subscription'});
             }
             else {
                 const target = `${config.subscriptionArray[requestCount].parent}/${config.subscriptionArray[requestCount].name}`;
-                    try {
-                        let { status, responseBody, count } = await deleteSubscription(target, requestCount);
-                        if (status === '5106' || status === '2002' || status === '2000' || status === '4105' || status === '4004') {
-                            console.log(`${count} ${target} - x-m2m-rsc : ${status} <----`);
-                            console.log(responseBody);
+                deleteSubscription(target, requestCount).then((status, responseBody, count) => {
+                    if (status === '5106' || status === '2002' || status === '2000' || status === '4105' || status === '4004') {
+                        console.log(`${count} ${target} - x-m2m-rsc : ${status} <----`);
+                        console.log(responseBody);
 
-                            requestCount = ++count;
+                        requestCount = ++count;
+                        // returnCount = 0;
+                        if (config.subscriptionArray.length <= count) {
+                            requestCount = 0;
                             // returnCount = 0;
-                            if (config.subscriptionArray.length <= count) {
-                                requestCount = 0;
-                                // returnCount = 0;
-                                resolve({state: 'create-subscription'});
-                            }
+                            resolve({state: 'create-subscription'});
                         }
-                    } catch (error) {
-                        reject(error);
                     }
-                
+
+                }).catch ((error) => {
+                    reject(error);
+                });
             }
         // }
         // returnCount++;
@@ -52,7 +50,7 @@ exports.deleteSubscriptionAll = () => {
 }
 
 const createSubscription = (parent, rn, nu, count) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let resultsubscription = {};
         let bodyString = '';
 
@@ -64,17 +62,16 @@ const createSubscription = (parent, rn, nu, count) => {
 
         bodyString = JSON.stringify(resultsubscription);
 
-        try {
-            const { status, responseBody } = await request.post(parent, '23', bodyString);
+        request.post(parent, '23', bodyString).then((status, responseBody) => {
             resolve({status: status, responseBody: responseBody, count: count});
-        } catch (error) {
+        }).catch ((error) => {
             reject(error);
-        }
+        });
     });
 }
 
 exports.createSubscriptionAll = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         // if(returnCount === 0) {
             if(config.subscriptionArray.length === 0) {
                 resolve({state: 'start-httpServer'});
@@ -84,24 +81,22 @@ exports.createSubscriptionAll = () => {
                 const rn = config.subscriptionArray[requestCount].name;
                 const nu = config.subscriptionArray[requestCount].nu;
 
-                    try {
-                        let { status, responseBody, count } = await createSubscription(parent, rn, nu, requestCount);
-                        if (status === '5106' || status === '2001' || status === '4105') {
-                            console.log(`${count} - ${parent}/${rn} - x-m2m-rsc : ${status} <----`);
-                            console.log(JSON.stringify(responseBody));
+                createSubscription(parent, rn, nu, requestCount).then((status, responseBody, count) => {
+                    if (status === '5106' || status === '2001' || status === '4105') {
+                        console.log(`${count} - ${parent}/${rn} - x-m2m-rsc : ${status} <----`);
+                        console.log(JSON.stringify(responseBody));
 
-                            requestCount = ++count;
+                        requestCount = ++count;
+                        // returnCount = 0;
+                        if (config.subscriptionArray.length <= count) {
+                            requestCount = 0;
                             // returnCount = 0;
-                            if (config.subscriptionArray.length <= count) {
-                                requestCount = 0;
-                                // returnCount = 0;
-                                resolve({state: 'start-httpServer'});
-                            }
+                            resolve({state: 'start-httpServer'});
                         }
-                    } catch (error) {
-                        reject(error);
                     }
-                
+                }).catch ((error) => {
+                    reject(error);
+                });
             }
         // }
         // returnCount++;

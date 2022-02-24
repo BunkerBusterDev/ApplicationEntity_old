@@ -4,7 +4,7 @@ import shortid from 'shortid';
 import config from 'config';
 
 const request = (path, method, ...args) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let options = {
             hostname: config.commonServiceEntity.host,
             port: config.commonServiceEntity.port,
@@ -46,9 +46,11 @@ const request = (path, method, ...args) => {
         request.on('error', function (error) {
             reject(`[http/request] : problem with request: ${error.message}`);
         });
+
         if(args[1] != null) {
-            await request.write(args[1]);
+            request.write(args[1]).then();
         }
+
         request.end();
     });
 }

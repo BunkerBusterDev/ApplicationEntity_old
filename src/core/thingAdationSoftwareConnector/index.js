@@ -119,7 +119,7 @@ exports.notification = (pathArray, conteintInstanceObject) => {
 };
 
 exports.initialize = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         try {
             server = net.createServer((socket) => {
                 console.log('[thingAdationSoftware/app] : thingAdationSoftware socket connected');

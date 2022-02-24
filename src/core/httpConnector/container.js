@@ -6,7 +6,7 @@ import request from './requestAxios';
 let requestCount = 0;
 
 const createContainer = (parent, rn, count) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         let bodyString = '';
         let resultContainer = {};
 
@@ -15,17 +15,16 @@ const createContainer = (parent, rn, count) => {
         resultContainer['m2m:cnt'].lbl = [rn];
         bodyString = JSON.stringify(resultContainer);
 
-        try {
-            const { status, responseBody } = await request.post(parent, '3', bodyString);
+        request.post(parent, '3', bodyString).then((status, responseBody) => {
             resolve({status: status, responseBody: responseBody, count: count});
-        } catch (error) {
+        }).catch ((error) => {
             reject(error);
-        }
+        });
     });
 }
 
 exports.createContainerAll = () => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         // if(returnCount === 0) {
 
             if(config.containerArray.length === 0) {
@@ -34,24 +33,22 @@ exports.createContainerAll = () => {
             else {
                 let parent = config.containerArray[requestCount].parent;
                 let rn = config.containerArray[requestCount].name;
-                    try {
-                        let { status, responseBody, count } = await createContainer(parent, rn, requestCount);
-                        if (status === '2001' || status === '5106' || status === '4105') {
-                            console.log(`${count} ${parent}/ ${rn} - x-m2m-rsc : ${status} <----`);
-                            console.log(responseBody);
+                createContainer(parent, rn, requestCount).then((status, responseBody, count) => {
+                    if (status === '2001' || status === '5106' || status === '4105') {
+                        console.log(`${count} ${parent}/ ${rn} - x-m2m-rsc : ${status} <----`);
+                        console.log(responseBody);
 
-                            requestCount = ++count;
-                            // returnCount = 0;
-                            if (config.containerArray.length <= count) {
-                                requestCount = 0;
-                                // return_count = 0;
-                                resolve({state: 'delete-subscription'});
-                            }
+                        requestCount = ++count;
+                        // returnCount = 0;
+                        if (config.containerArray.length <= count) {
+                            requestCount = 0;
+                            // return_count = 0;
+                            resolve({state: 'delete-subscription'});
                         }
-                    } catch (error) {
-                        reject(error);
                     }
-                
+                }).catch ((error) => {
+                    reject(error);
+                });
             }
         // }
         // returnCount++;
