@@ -1,12 +1,12 @@
 {
-  "name": "adb_ae",
-  "version": "0.0.1",
+  "name": "ApplicationEntity-NodeJS",
+  "version": "1.0.0",
   "main": "src/app.js",
   "scripts": {
     "dev": "cross-env NODE_PATH=src nodemon --inspect src/app --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": "git@github.com:BunkerBusterDev/adn_ae-nodejs.git",
+  "repository": "git@github.com:BunkerBusterDev/ApplicationEntity-NodeJS.git",
   "author": "BunkerBusterDev <bunkerbusterdev@gmail.com>",
   "license": "MIT",
   "devDependencies": {
@@ -22,6 +22,7 @@
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.1.1",
     "shortid": "^2.2.8",
+    "twitter": "^1.7.1",
     "url": "^0.11.0"
   },
   "babel": {
