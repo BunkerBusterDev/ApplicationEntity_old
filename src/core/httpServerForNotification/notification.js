@@ -9,15 +9,15 @@ const parse_sgn = (primitiveContent) => {
         let contentInstanceObject = {};
 
         if(primitiveContent.sgn) {
-            const nmtype = primitiveContent['sgn'] != null ? 'short' : 'long';
-            sgnObj = primitiveContent['sgn'] != null ? primitiveContent['sgn'] : primitiveContent['singleNotification'];
+            const nmtype = primitiveContent['sgn'] !== null ? 'short' : 'long';
+            sgnObj = primitiveContent['sgn'] !== null ? primitiveContent['sgn'] : primitiveContent['singleNotification'];
 
             if (nmtype === 'long') {
                 reject('oneM2M spec. define only short name for resource')
             }
             else { // 'short'
                 if (sgnObj.sur) {
-                    if(sgnObj.sur.charAt(0) != '/') {
+                    if(sgnObj.sur.charAt(0) !== '/') {
                         sgnObj.sur = '/' + sgnObj.sur;
                     }
                     pathArray = sgnObj.sur.split('/');
@@ -92,7 +92,7 @@ exports.httpNotificationAction = async (requestIdentifier, primitiveContent, bod
                             ctx.status = 201
                             ctx.body = '<h1>success to receive notification</h1>';
                             
-                            console.log('http ' + bodyType + ' notification <----');
+                            console.log(`http ${bodyType} notification <----`);
     
                             if (pathArray[pathArray.length - 2] === 'cnt-cam') {
                                 thingAdationSoftwareConnector.sendTweet(contentInstanceObject);

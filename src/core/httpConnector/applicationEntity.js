@@ -16,15 +16,15 @@ exports.createApplicationEntity =  () => {
     
         bodyString = JSON.stringify(resultsApplicationEntity);
 
-        request.post(config.applicationEntity.parent, '2', bodyString).then(({status, responseBody}) => {
-            if (status === '2001') {
+        request.post(config.applicationEntity.parent, '2', bodyString).then(({rsponseStatusCode, responseBody}) => {
+            if (rsponseStatusCode === '2001') {
                 config.applicationEntity.id = responseBody['m2m:ae']['aei'];
 
-                console.log(`x-m2m-rsc : ${status} - ${config.applicationEntity.id} <----`);
+                console.log(`x-m2m-rsc : ${rsponseStatusCode} - ${config.applicationEntity.id} <----`);
                 resolve({state: 'create-container'});
             }
-            else if (status === '5106' || status === '4105') {
-                console.log(`x-m2m-rsc : ${status} <----`);
+            else if (rsponseStatusCode === '5106' || rsponseStatusCode === '4105') {
+                console.log(`x-m2m-rsc : ${rsponseStatusCode} <----`);
                 resolve({state: 'retrieve-applicationEntity'});
             }
         }).catch (error => {
@@ -39,10 +39,10 @@ exports.retrieveApplicationEntity = () => {
         if (config.applicationEntity.id === 'S') {
             config.applicationEntity.id = 'S' + shortid.generate();
         }
-        request.get(`${config.applicationEntity.parent}/${config.applicationEntity.name}`).then(({status, responseBody}) => {
-            if (status === '2000') {
+        request.get(`${config.applicationEntity.parent}/${config.applicationEntity.name}`).then(({rsponseStatusCode, responseBody}) => {
+            if (rsponseStatusCode === '2000') {
                 let applicationEntityId = responseBody['m2m:ae']['aei'];
-                console.log(`x-m2m-rsc : ${status} - ${applicationEntityId} <----`);
+                console.log(`x-m2m-rsc : ${rsponseStatusCode} - ${applicationEntityId} <----`);
 
                 if(config.applicationEntity.id != applicationEntityId && config.applicationEntity.id != ('/'+applicationEntityId)) {
                     reject(`Application-Entity-ID created is ${applicationEntityId} not equal to device Application-Entity-ID is ${config.applicationEntity.id}`);
@@ -52,7 +52,7 @@ exports.retrieveApplicationEntity = () => {
                 }
             }
             else {
-                reject(`x-m2m-rsc : ${status} <----`);
+                reject(`x-m2m-rsc : ${rsponseStatusCode} <----`);
             }
         }).catch (error => {
             reject(error);

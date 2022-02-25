@@ -11,25 +11,25 @@ exports.createContentInstance = (parent, content, socket) => {
 
         bodyString = JSON.stringify(resultsContentInstance);
 
-        request.post(parent, '4', bodyString).then(({status}) => {
+        request.post(parent, '4', bodyString).then(({rsponseStatusCode}) => {
             try {
                 let parentArray = parent.split('/');
                 let containerName = parentArray[parentArray.length - 1];
                 let result = {};
                 result.containerName = containerName;
-                result.content = status;
+                result.content = rsponseStatusCode;
     
-                console.log('<---- x-m2m-rsc : ' + status + ' <----');
-                if (status == 5106 || status == 2001 || status == 4105) {
+                console.log(`<---- x-m2m-rsc : ${rsponseStatusCode} <----`);
+                if (rsponseStatusCode == 5106 || rsponseStatusCode == 2001 || rsponseStatusCode == 4105) {
                     socket.write(JSON.stringify(result) + '<EOF>');
                     resolve(true);
                 }
-                else if (status == 5000) {
+                else if (rsponseStatusCode == 5000) {
                     restart();
                     socket.write(JSON.stringify(result) + '<EOF>');
                     reject();
                 }
-                else if (status == 9999) {
+                else if (rsponseStatusCode == 9999) {
                     socket.write(JSON.stringify(result) + '<EOF>');
                     reject();
                 }

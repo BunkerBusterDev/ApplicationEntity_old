@@ -7,8 +7,8 @@ let requestCount = 0;
 
 const deleteSubscription = (target) => {
     return new Promise((resolve, reject) => {
-        request.delete(target).then(({status, responseBody}) => {
-            resolve({status: status, responseBody: responseBody});
+        request.delete(target).then(({rsponseStatusCode, responseBody}) => {
+            resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
         }).catch (error => {
             reject(error);
         });
@@ -23,9 +23,9 @@ exports.deleteSubscriptionAll = () => {
             }
             else {
                 const target = `${config.subscriptionArray[requestCount].parent}/${config.subscriptionArray[requestCount].name}`;
-                deleteSubscription(target).then(({status, responseBody}) => {
-                    if (status === '5106' || status === '2002' || status === '2000' || status === '4105' || status === '4004') {
-                        console.log(`${requestCount} ${target} - x-m2m-rsc : ${status} <----`);
+                deleteSubscription(target).then(({rsponseStatusCode, responseBody}) => {
+                    if (rsponseStatusCode === '5106' || rsponseStatusCode === '2002' || rsponseStatusCode === '2000' || rsponseStatusCode === '4105' || rsponseStatusCode === '4004') {
+                        console.log(`${requestCount} ${target} - x-m2m-rsc : ${rsponseStatusCode} <----`);
                         console.log(responseBody);
 
                         requestCount++;
@@ -62,8 +62,8 @@ const createSubscription = (parent, rn, nu) => {
 
         bodyString = JSON.stringify(resultsubscription);
 
-        request.post(parent, '23', bodyString).then(({status, responseBody}) => {
-            resolve({status: status, responseBody: responseBody});
+        request.post(parent, '23', bodyString).then(({rsponseStatusCode, responseBody}) => {
+            resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
         }).catch (error => {
             reject(error);
         });
@@ -81,9 +81,9 @@ exports.createSubscriptionAll = () => {
                 const rn = config.subscriptionArray[requestCount].name;
                 const nu = config.subscriptionArray[requestCount].nu;
 
-                createSubscription(parent, rn, nu, requestCount).then(({status, responseBody}) => {
-                    if (status === '5106' || status === '2001' || status === '4105') {
-                        console.log(`${requestCount} - ${parent}/${rn} - x-m2m-rsc : ${status} <----`);
+                createSubscription(parent, rn, nu, requestCount).then(({rsponseStatusCode, responseBody}) => {
+                    if (rsponseStatusCode === '5106' || rsponseStatusCode === '2001' || rsponseStatusCode === '4105') {
+                        console.log(`${requestCount} - ${parent}/${rn} - x-m2m-rsc : ${rsponseStatusCode} <----`);
                         console.log(JSON.stringify(responseBody));
 
                         requestCount++;

@@ -15,8 +15,8 @@ const createContainer = (parent, rn) => {
         resultContainer['m2m:cnt'].lbl = [rn];
         bodyString = JSON.stringify(resultContainer);
 
-        request.post(parent, '3', bodyString).then(({status, responseBody}) => {
-            resolve({status: status, responseBody: responseBody});
+        request.post(parent, '3', bodyString).then(({rsponseStatusCode, responseBody}) => {
+            resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
         }).catch (error => {
             reject(error);
         });
@@ -33,9 +33,9 @@ exports.createContainerAll = () => {
             else {
                 let parent = config.containerArray[requestCount].parent;
                 let rn = config.containerArray[requestCount].name;
-                createContainer(parent, rn).then(({status, responseBody}) => {
-                    if (status === '2001' || status === '5106' || status === '4105') {
-                        console.log(`${requestCount} ${parent}/ ${rn} - x-m2m-rsc : ${status} <----`);
+                createContainer(parent, rn).then(({rsponseStatusCode, responseBody}) => {
+                    if (rsponseStatusCode === '2001' || rsponseStatusCode === '5106' || rsponseStatusCode === '4105') {
+                        console.log(`${requestCount} ${parent}/ ${rn} - x-m2m-rsc : ${rsponseStatusCode} <----`);
                         console.log(responseBody);
 
                         requestCount++;

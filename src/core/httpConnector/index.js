@@ -6,7 +6,7 @@ import Subscription from './subscription';
 import HttpServerForNotification from 'core/httpServerForNotification'
 import ThingAdationSoftwareConnector from 'core/thingAdationSoftwareConnector'
 
-global.initState = 'create-applicationEntity';
+let initState = 'create-applicationEntity';
 
 exports.initialize = async () => {
     console.log(`[initState] : ${initState}`);

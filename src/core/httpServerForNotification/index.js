@@ -17,7 +17,7 @@ router.post('/:resourcename0', (ctx) => {
     let requestBody = ctx.request.body;
 
     for (let i = 0; i < config.subscriptionArray.length; i++) {
-        if (config.subscriptionArray[i]['nu'] != null) {
+        if (config.subscriptionArray[i]['nu'] !== null) {
             if(url.parse(config.subscriptionArray[i].nu).protocol === 'http:') {
                 let nu_path = url.parse(config.subscriptionArray[i]['nu']).pathname.toString().split('/')[1];
                 if (nu_path === ctx.params.resourcename0) {
@@ -28,8 +28,8 @@ router.post('/:resourcename0', (ctx) => {
 
                         notification.httpNotificationAction(requestIdentifier, primitiveContent, 'json', ctx);
                     }
-                    catch (e) {
-                        console.log(e);
+                    catch (error) {
+                        console.log(error);
                     }
                     break;
                 }

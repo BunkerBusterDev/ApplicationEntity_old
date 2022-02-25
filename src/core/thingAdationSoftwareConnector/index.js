@@ -34,16 +34,14 @@ async function thingAdationSoftwareConnectorHandler(data) {
                 this.write(`${line}<EOF>`);
             }
             else {
-                if(initState === 'ready') {
-                    for(let j = 0; j < config.containerArray.length; j++) {
-                        if (config.containerArray[j].name === containerName) {
-                            let parent = config.containerArray[j].parent + '/' + containerName;
-                            try {
-                                await ContentInstance.createContentInstance(parent, content, this);
-                                break;
-                            } catch (error) {
-                                console.log(error);
-                            }
+                for(let j = 0; j < config.containerArray.length; j++) {
+                    if (config.containerArray[j].name === containerName) {
+                        let parent = config.containerArray[j].parent + '/' + containerName;
+                        try {
+                            await ContentInstance.createContentInstance(parent, content, this);
+                            break;
+                        } catch (error) {
+                            console.log(error);
                         }
                     }
                 }
@@ -72,9 +70,9 @@ exports.sendTweet = (conteintInstanceObject) => {
     currentDate.setHours(currentDate.getHours() + currentTimezoneOffset);
     const currentTime = currentDate.toISOString().replace(/\..+/, '');
 
-    const contentArray = (conteintInstanceObject.content != null ? conteintInstanceObject.content : conteintInstanceObject.content).split(',');
+    const contentArray = (conteintInstanceObject.content !== null ? conteintInstanceObject.content : conteintInstanceObject.content).split(',');
 
-    if (contentArray[contentArray.length-1] != null) {
+    if (contentArray[contentArray.length-1] !== null) {
         const bitmap = new Buffer(contentArray[contentArray.length-1], 'base64');
         fs.writeFileSync('decode.jpg', bitmap);
 
@@ -104,7 +102,7 @@ exports.sendTweet = (conteintInstanceObject) => {
 exports.notification = (pathArray, conteintInstanceObject) => {
     let contentInstance = {};
     contentInstance.containerName = pathArray[pathArray.length-2];
-    contentInstance.content = (conteintInstanceObject.con != null) ? conteintInstanceObject.con : conteintInstanceObject.content;
+    contentInstance.content = (conteintInstanceObject.con !== null) ? conteintInstanceObject.con : conteintInstanceObject.content;
 
     if(contentInstance.content == '') {
         console.log('---- is not contentInstance message');
@@ -112,7 +110,7 @@ exports.notification = (pathArray, conteintInstanceObject) => {
     else {
         console.log('<---- send to thingAdaptionSoftware');
 
-        if (socketBuffer[pathArray[pathArray.length-2]] != null) {
+        if (socketBuffer[pathArray[pathArray.length-2]] !== null) {
             socketBuffer[pathArray[pathArray.length-2]].write(JSON.stringify(contentInstance) + '<EOF>');
         }
     }
