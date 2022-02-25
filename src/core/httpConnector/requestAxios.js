@@ -32,7 +32,7 @@ const request = (path, method, ...args) => {
         }).catch (error => {
             if(error.response) {
                 const status = error.response.headers['x-m2m-rsc'];
-                resolve({status: status, responseBody: error.response.data});
+                reject({status: status, responseBody: error.response.data});
             } else if (error.request) {
                 console.log('[http/request] : The request was made but no response was received');
             } else {

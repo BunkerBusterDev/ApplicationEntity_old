@@ -58,7 +58,9 @@ const request = (path, method, ...args) => {
 exports.get = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            resolve(request(path, 'get'));
+            request(path, 'get').then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
@@ -71,9 +73,11 @@ exports.post = (path, ty, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}${appendTy}`;
 
         try {
-            resolve(request(path, 'post', contentType, bodyString));
+            request(path, 'post', contentType, bodyString).then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
-            reject(error)
+            reject(error);
         }
     });
 }
@@ -83,7 +87,9 @@ exports.put = (path, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}`;
 
         try {
-            resolve(request(path, 'put', contentType, bodyString));
+            request(path, 'put', contentType, bodyString).then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
@@ -93,7 +99,9 @@ exports.put = (path, bodyString) => {
 exports.delete = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            resolve(request(path, 'delete'));
+            request(path, 'delete').then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
