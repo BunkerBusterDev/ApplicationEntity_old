@@ -1,8 +1,8 @@
 import shortid from 'shortid';
 
 import config from 'config';
-import request from './requestHttp';
-// import request from './requestAxios';
+import request from './requestAxios';
+// import request from './requestHttp';
 
 exports.createApplicationEntity =  () => {
     return new Promise((resolve, reject) => {
@@ -16,21 +16,20 @@ exports.createApplicationEntity =  () => {
     
         bodyString = JSON.stringify(resultsApplicationEntity);
 
-            request.post(config.applicationEntity.parent, '2', bodyString).then((status, responseBody) => {
-                console.log(status);
-                if (status === '2001') {
-                    config.applicationEntity.id = responseBody['m2m:ae']['aei'];
-    
-                    console.log(`x-m2m-rsc : ${status} - ${config.applicationEntity.id} <----`);
-                    resolve({state: 'create-container'});
-                }
-                else if (status === '5106' || status === '4105') {
-                    console.log(`x-m2m-rsc : ${status} <----`);
-                    resolve({state: 'retrieve-applicationEntity'});
-                }
-            }).catch ((error) => {
-                reject(error);
-            });
+        request.post(config.applicationEntity.parent, '2', bodyString).then(({status, responseBody}) => {
+            if (status === '2001') {
+                config.applicationEntity.id = responseBody['m2m:ae']['aei'];
+
+                console.log(`x-m2m-rsc : ${status} - ${config.applicationEntity.id} <----`);
+                resolve({state: 'create-container'});
+            }
+            else if (status === '5106' || status === '4105') {
+                console.log(`x-m2m-rsc : ${status} <----`);
+                resolve({state: 'retrieve-applicationEntity'});
+            }
+        }).catch (error => {
+            reject(error);
+        });
     });
 }
 
@@ -40,7 +39,7 @@ exports.retrieveApplicationEntity = () => {
         if (config.applicationEntity.id === 'S') {
             config.applicationEntity.id = 'S' + shortid.generate();
         }
-        request.get(`${config.applicationEntity.parent}/${config.applicationEntity.name}`).then((status, responseBody) => {
+        request.get(`${config.applicationEntity.parent}/${config.applicationEntity.name}`).then(({status, responseBody}) => {
             if (status === '2000') {
                 let applicationEntityId = responseBody['m2m:ae']['aei'];
                 console.log(`x-m2m-rsc : ${status} - ${applicationEntityId} <----`);
@@ -55,7 +54,7 @@ exports.retrieveApplicationEntity = () => {
             else {
                 reject(`x-m2m-rsc : ${status} <----`);
             }
-        }).catch ((error) => {
+        }).catch (error => {
             reject(error);
         });
     });

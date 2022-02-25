@@ -53,7 +53,6 @@ const parse_sgn = (primitiveContent) => {
                     contentInstanceObject = {};
                     contentInstanceObject.vrq = sgnObj.vrq;
                 }
-
                 else {
                     reject('[mqtt_noti_action] nev tag of m2m:sgn is none. m2m:notification format mismatch with oneM2M spec.');
                     contentInstanceObject = null;

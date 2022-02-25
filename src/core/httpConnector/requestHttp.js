@@ -48,7 +48,7 @@ const request = (path, method, ...args) => {
         });
 
         if(args[1] != null) {
-            request.write(args[1]).then();
+            request.write(args[1])
         }
 
         request.end();

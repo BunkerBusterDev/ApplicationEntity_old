@@ -1,5 +1,5 @@
-import request from './requestHttp';
-// import request from './requestAxios';
+import request from './requestAxios';
+// import request from './requestHttp';
 
 exports.createContentInstance = (parent, content, socket) => {
     return new Promise((resolve, reject) => {
@@ -11,7 +11,7 @@ exports.createContentInstance = (parent, content, socket) => {
 
         bodyString = JSON.stringify(resultsContentInstance);
 
-        request.post(parent, '4', bodyString).then((status) => {
+        request.post(parent, '4', bodyString).then(({status}) => {
             try {
                 let parentArray = parent.split('/');
                 let containerName = parentArray[parentArray.length - 1];

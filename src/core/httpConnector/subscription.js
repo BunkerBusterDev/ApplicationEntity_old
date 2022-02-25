@@ -1,15 +1,15 @@
 import config from 'config';
-// import request from './requestHttp';
 import request from './requestAxios';
+// import request from './requestHttp';
 
 // let returnCount = 0;
 let requestCount = 0;
 
-const deleteSubscription = (target, count) => {
+const deleteSubscription = (target) => {
     return new Promise((resolve, reject) => {
-        request.delete(target).then((status, responseBody) => {
-            resolve({status: status, responseBody: responseBody, count: count});
-        }).catch ((error) => {
+        request.delete(target).then(({status, responseBody}) => {
+            resolve({status: status, responseBody: responseBody});
+        }).catch (error => {
             reject(error);
         });
     });
@@ -23,21 +23,21 @@ exports.deleteSubscriptionAll = () => {
             }
             else {
                 const target = `${config.subscriptionArray[requestCount].parent}/${config.subscriptionArray[requestCount].name}`;
-                deleteSubscription(target, requestCount).then((status, responseBody, count) => {
+                deleteSubscription(target).then(({status, responseBody}) => {
                     if (status === '5106' || status === '2002' || status === '2000' || status === '4105' || status === '4004') {
-                        console.log(`${count} ${target} - x-m2m-rsc : ${status} <----`);
+                        console.log(`${requestCount} ${target} - x-m2m-rsc : ${status} <----`);
                         console.log(responseBody);
 
-                        requestCount = ++count;
+                        requestCount++;
                         // returnCount = 0;
-                        if (config.subscriptionArray.length <= count) {
+                        if (config.subscriptionArray.length <= requestCount) {
                             requestCount = 0;
                             // returnCount = 0;
                             resolve({state: 'create-subscription'});
                         }
                     }
 
-                }).catch ((error) => {
+                }).catch (error => {
                     reject(error);
                 });
             }
@@ -49,7 +49,7 @@ exports.deleteSubscriptionAll = () => {
     });
 }
 
-const createSubscription = (parent, rn, nu, count) => {
+const createSubscription = (parent, rn, nu) => {
     return new Promise((resolve, reject) => {
         let resultsubscription = {};
         let bodyString = '';
@@ -62,9 +62,9 @@ const createSubscription = (parent, rn, nu, count) => {
 
         bodyString = JSON.stringify(resultsubscription);
 
-        request.post(parent, '23', bodyString).then((status, responseBody) => {
-            resolve({status: status, responseBody: responseBody, count: count});
-        }).catch ((error) => {
+        request.post(parent, '23', bodyString).then(({status, responseBody}) => {
+            resolve({status: status, responseBody: responseBody});
+        }).catch (error => {
             reject(error);
         });
     });
@@ -81,20 +81,20 @@ exports.createSubscriptionAll = () => {
                 const rn = config.subscriptionArray[requestCount].name;
                 const nu = config.subscriptionArray[requestCount].nu;
 
-                createSubscription(parent, rn, nu, requestCount).then((status, responseBody, count) => {
+                createSubscription(parent, rn, nu, requestCount).then(({status, responseBody}) => {
                     if (status === '5106' || status === '2001' || status === '4105') {
-                        console.log(`${count} - ${parent}/${rn} - x-m2m-rsc : ${status} <----`);
+                        console.log(`${requestCount} - ${parent}/${rn} - x-m2m-rsc : ${status} <----`);
                         console.log(JSON.stringify(responseBody));
 
-                        requestCount = ++count;
+                        requestCount++;
                         // returnCount = 0;
-                        if (config.subscriptionArray.length <= count) {
+                        if (config.subscriptionArray.length <= requestCount) {
                             requestCount = 0;
                             // returnCount = 0;
                             resolve({state: 'start-httpServer'});
                         }
                     }
-                }).catch ((error) => {
+                }).catch (error => {
                     reject(error);
                 });
             }

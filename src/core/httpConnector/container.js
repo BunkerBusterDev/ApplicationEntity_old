@@ -1,11 +1,11 @@
 import config from 'config';
-// import request from './requestHttp';
 import request from './requestAxios';
+// import request from './requestHttp';
 
 // let returnCount = 0;
 let requestCount = 0;
 
-const createContainer = (parent, rn, count) => {
+const createContainer = (parent, rn) => {
     return new Promise((resolve, reject) => {
         let bodyString = '';
         let resultContainer = {};
@@ -15,9 +15,9 @@ const createContainer = (parent, rn, count) => {
         resultContainer['m2m:cnt'].lbl = [rn];
         bodyString = JSON.stringify(resultContainer);
 
-        request.post(parent, '3', bodyString).then((status, responseBody) => {
-            resolve({status: status, responseBody: responseBody, count: count});
-        }).catch ((error) => {
+        request.post(parent, '3', bodyString).then(({status, responseBody}) => {
+            resolve({status: status, responseBody: responseBody});
+        }).catch (error => {
             reject(error);
         });
     });
@@ -33,20 +33,20 @@ exports.createContainerAll = () => {
             else {
                 let parent = config.containerArray[requestCount].parent;
                 let rn = config.containerArray[requestCount].name;
-                createContainer(parent, rn, requestCount).then((status, responseBody, count) => {
+                createContainer(parent, rn).then(({status, responseBody}) => {
                     if (status === '2001' || status === '5106' || status === '4105') {
-                        console.log(`${count} ${parent}/ ${rn} - x-m2m-rsc : ${status} <----`);
+                        console.log(`${requestCount} ${parent}/ ${rn} - x-m2m-rsc : ${status} <----`);
                         console.log(responseBody);
 
-                        requestCount = ++count;
+                        requestCount++;
                         // returnCount = 0;
-                        if (config.containerArray.length <= count) {
+                        if (config.containerArray.length <= requestCount) {
                             requestCount = 0;
                             // return_count = 0;
                             resolve({state: 'delete-subscription'});
                         }
                     }
-                }).catch ((error) => {
+                }).catch (error => {
                     reject(error);
                 });
             }

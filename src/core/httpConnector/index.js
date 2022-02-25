@@ -41,11 +41,7 @@ exports.initialize = async () => {
     }
 }
 
-global.restart = async () => {
-    try {
-        initState = 'create-applicationEntity';
-        await WatchdogTimer.setWatchdogTimer('httpConnector/initialize', 1, this.initialize);
-    } catch (error) {
-        console.log(error);
-    }
+global.restart = () => {
+    initState = 'create-applicationEntity';
+    WatchdogTimer.setWatchdogTimer('httpConnector/initialize', 1, this.initialize);
 }

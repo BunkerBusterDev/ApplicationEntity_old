@@ -5,9 +5,8 @@ import config from 'config';
 
 axios.defaults.baseURL = `${config.useProtocol}://${config.commonServiceEntity.host}:${config.commonServiceEntity.port}`;
 
-const request = async (path, method, ...args) => {
+const request = (path, method, ...args) => {
     return new Promise((resolve, reject) => {
-
         let options = {
             url: path,
             method: method,
@@ -26,14 +25,18 @@ const request = async (path, method, ...args) => {
         }
         
         axios.request(options).then((response) => {
-            resolve({status: response.headers['x-m2m-rsc'], responseBody:response.data});
-        }).catch ((error) => {
-            const responseError = error.response;
-            if(responseError.headers['x-m2m-rsc'] != null) {
-                const status = responseError.headers['x-m2m-rsc'];
-                resolve({status: status, responseBody:responseError.data});
+            if(response.headers['x-m2m-rsc']) {
+                const status = response.headers['x-m2m-rsc'];
+                resolve({status: status, responseBody: response.data});
+            }
+        }).catch (error => {
+            if(error.response) {
+                const status = error.response.headers['x-m2m-rsc'];
+                resolve({status: status, responseBody: error.response.data});
+            } else if (error.request) {
+                console.log('[http/request] : The request was made but no response was received');
             } else {
-                reject(error);
+                console.log(`[http/request] : Something happened in setting up the request that triggered an Error\r\n${error.message}`);
             }
         });
     });
@@ -42,7 +45,9 @@ const request = async (path, method, ...args) => {
 exports.get = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            resolve(request(path, 'get'));
+            request(path, 'get').then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
@@ -55,9 +60,11 @@ exports.post = (path, ty, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}${appendTY}`;
 
         try {
-            resolve(request(path, 'post', contentType, bodyString));
+            request(path, 'post', contentType, bodyString).then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
-            reject(error)
+            reject(error);
         }
     });
 }
@@ -67,7 +74,9 @@ exports.put = (path, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}`;
 
         try {
-            resolve(request(path, 'put', contentType, bodyString));
+            request(path, 'put', contentType, bodyString).then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
@@ -76,9 +85,10 @@ exports.put = (path, bodyString) => {
 
 exports.delete = (path) => {
     return new Promise((resolve, reject) => {
-
         try {
-            resolve(request(path, 'delete'));
+            request(path, 'delete').then(({status, responseBody}) => {
+                resolve({status: status, responseBody: responseBody});
+            });
         } catch (error) {
             reject(error)
         }
