@@ -18,7 +18,7 @@ const request = (path, method, ...args) => {
             }
         };
     
-        if(args[0] !== null && args[1] !== null) {
+        if(args[0] !== undefined && args[1] !== undefined) {
             options.data = args[1];
             options.headers['Content-Type'] = args[0];
             options.headers['Content-Length'] = args[1].length;
@@ -26,14 +26,14 @@ const request = (path, method, ...args) => {
         
         axios.request(options).then((response) => {
             if(response.headers['x-m2m-rsc']) {
-                const rsponseStatusCode = response.headers['x-m2m-rsc'];
-                resolve({rsponseStatusCode: rsponseStatusCode, responseBody: response.data});
+                const responseStatusCode = response.headers['x-m2m-rsc'];
+                resolve({responseStatusCode: responseStatusCode, responseBody: response.data});
             }
         }).catch (error => {
             if(error.response) {
-                const rsponseStatusCode = error.response.headers['x-m2m-rsc'];
-                reject({rsponseStatusCode: rsponseStatusCode, responseBody: error.response.data});
-            } else if (error.request) {
+                const responseStatusCode = error.response.headers['x-m2m-rsc'];
+                resolve({responseStatusCode: responseStatusCode, responseBody: error.response.data});
+            } else if(error.request) {
                 console.log('[http/request] : The request was made but no response was received');
             } else {
                 console.log(`[http/request] : Something happened in setting up the request that triggered an Error\r\n${error.message}`);
@@ -45,8 +45,8 @@ const request = (path, method, ...args) => {
 exports.get = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            request(path, 'get').then(({rsponseStatusCode, responseBody}) => {
-                resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+            request(path, 'get').then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)
@@ -60,8 +60,8 @@ exports.post = (path, ty, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}${appendTY}`;
 
         try {
-            request(path, 'post', contentType, bodyString).then(({rsponseStatusCode, responseBody}) => {
-                resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+            request(path, 'post', contentType, bodyString).then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error);
@@ -74,8 +74,8 @@ exports.put = (path, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}`;
 
         try {
-            request(path, 'put', contentType, bodyString).then(({rsponseStatusCode, responseBody}) => {
-                resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+            request(path, 'put', contentType, bodyString).then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)
@@ -86,8 +86,8 @@ exports.put = (path, bodyString) => {
 exports.delete = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            request(path, 'delete').then(({rsponseStatusCode, responseBody}) => {
-                resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+            request(path, 'delete').then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)

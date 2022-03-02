@@ -2,13 +2,12 @@ import config from 'config';
 import request from './requestAxios';
 // import request from './requestHttp';
 
-// let returnCount = 0;
 let requestCount = 0;
 
 const deleteSubscription = (target) => {
     return new Promise((resolve, reject) => {
-        request.delete(target).then(({rsponseStatusCode, responseBody}) => {
-            resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+        request.delete(target).then(({responseStatusCode, responseBody}) => {
+            resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
         }).catch (error => {
             reject(error);
         });
@@ -17,35 +16,27 @@ const deleteSubscription = (target) => {
 
 exports.deleteSubscriptionAll = () => {
     return new Promise((resolve, reject) => {
-        // if(returnCount === 0) {
-            if(config.subscriptionArray.length === 0) {
-                resolve({state: 'create-subscription'});
-            }
-            else {
-                const target = `${config.subscriptionArray[requestCount].parent}/${config.subscriptionArray[requestCount].name}`;
-                deleteSubscription(target).then(({rsponseStatusCode, responseBody}) => {
-                    if (rsponseStatusCode === '5106' || rsponseStatusCode === '2002' || rsponseStatusCode === '2000' || rsponseStatusCode === '4105' || rsponseStatusCode === '4004') {
-                        console.log(`${requestCount} ${target} - x-m2m-rsc : ${rsponseStatusCode} <----`);
-                        console.log(responseBody);
+        if(config.subscriptionArray.length === 0) {
+            resolve({state: 'create-subscription'});
+        }
+        else {
+            const target = `${config.subscriptionArray[requestCount].parent}/${config.subscriptionArray[requestCount].name}`;
+            deleteSubscription(target).then(({responseStatusCode, responseBody}) => {
+                if(responseStatusCode === '5106' || responseStatusCode === '2002' || responseStatusCode === '2000' || responseStatusCode === '4105' || responseStatusCode === '4004') {
+                    console.log(`${requestCount} ${target} - x-m2m-rsc : ${responseStatusCode} <----`);
+                    console.log(responseBody);
 
-                        requestCount++;
-                        // returnCount = 0;
-                        if (config.subscriptionArray.length <= requestCount) {
-                            requestCount = 0;
-                            // returnCount = 0;
-                            resolve({state: 'create-subscription'});
-                        }
+                    requestCount++;
+                    if(config.subscriptionArray.length <= requestCount) {
+                        requestCount = 0;
+                        resolve({state: 'create-subscription'});
                     }
+                }
 
-                }).catch (error => {
-                    reject(error);
-                });
-            }
-        // }
-        // returnCount++;
-        // if(returnCount >= 3) {
-        //     returnCount = 0;
-        // }
+            }).catch (error => {
+                reject(error);
+            });
+        }
     });
 }
 
@@ -62,8 +53,8 @@ const createSubscription = (parent, rn, nu) => {
 
         bodyString = JSON.stringify(resultsubscription);
 
-        request.post(parent, '23', bodyString).then(({rsponseStatusCode, responseBody}) => {
-            resolve({rsponseStatusCode: rsponseStatusCode, responseBody: responseBody});
+        request.post(parent, '23', bodyString).then(({responseStatusCode, responseBody}) => {
+            resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
         }).catch (error => {
             reject(error);
         });
@@ -72,36 +63,28 @@ const createSubscription = (parent, rn, nu) => {
 
 exports.createSubscriptionAll = () => {
     return new Promise((resolve, reject) => {
-        // if(returnCount === 0) {
-            if(config.subscriptionArray.length === 0) {
-                resolve({state: 'start-httpServer'});
-            }
-            else {
-                const parent = config.subscriptionArray[requestCount].parent;
-                const rn = config.subscriptionArray[requestCount].name;
-                const nu = config.subscriptionArray[requestCount].nu;
+        if(config.subscriptionArray.length === 0) {
+            resolve({state: 'start-httpServer'});
+        }
+        else {
+            const parent = config.subscriptionArray[requestCount].parent;
+            const rn = config.subscriptionArray[requestCount].name;
+            const nu = config.subscriptionArray[requestCount].nu;
 
-                createSubscription(parent, rn, nu, requestCount).then(({rsponseStatusCode, responseBody}) => {
-                    if (rsponseStatusCode === '5106' || rsponseStatusCode === '2001' || rsponseStatusCode === '4105') {
-                        console.log(`${requestCount} - ${parent}/${rn} - x-m2m-rsc : ${rsponseStatusCode} <----`);
-                        console.log(JSON.stringify(responseBody));
+            createSubscription(parent, rn, nu, requestCount).then(({responseStatusCode, responseBody}) => {
+                if(responseStatusCode === '5106' || responseStatusCode === '2001' || responseStatusCode === '4105') {
+                    console.log(`${requestCount} - ${parent}/${rn} - x-m2m-rsc : ${responseStatusCode} <----`);
+                    console.log(JSON.stringify(responseBody));
 
-                        requestCount++;
-                        // returnCount = 0;
-                        if (config.subscriptionArray.length <= requestCount) {
-                            requestCount = 0;
-                            // returnCount = 0;
-                            resolve({state: 'start-httpServer'});
-                        }
+                    requestCount++;
+                    if(config.subscriptionArray.length <= requestCount) {
+                        requestCount = 0;
+                        resolve({state: 'start-httpServer'});
                     }
-                }).catch (error => {
-                    reject(error);
-                });
-            }
-        // }
-        // returnCount++;
-        // if(returnCount >= 3) {
-        //     returnCount = 0;
-        // }
+                }
+            }).catch (error => {
+                reject(error);
+            });
+        }
     });
 }

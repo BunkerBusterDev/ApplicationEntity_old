@@ -44,12 +44,13 @@ applicationEntity.bodyType     = 'json';
     subscriptionArray[i] = {};
     subscriptionArray[i].parent = `/${commonServiceEntity.name}/${applicationEntity.name}/${containerArray[containerArray.length-1].name}`;
     subscriptionArray[i].name = 'sub';
-    subscriptionArray[i].nu = `http://${ip.address()}:${applicationEntity.port}/noti?ct=json`; // http
+    if(config.useProtocol === 'http') {
+       subscriptionArray[i].nu = `http://${commonServiceEntity.host}:${applicationEntity.port}/noti?ct=json`; // http
+    } else if(config.useProtocol === 'mqtt') {
+       subscriptionArray[i].nu = `mqtt://${commonServiceEntity.host}/${applicationEntity.id}?ct=${applicationEntity.bodyType}`; // mqtt
+       //subscriptionArray[i].nu = `mqtt://${commonServiceEntity.host}/${applicationEntity.id}?rcn=9&ct=${applicationEntity.bodyType}`; // mqtt
+    }
  }
- //subscriptionArray[count++].nu = 'Mobius/'+applicationEntity.name; // mqtt
- //subscriptionArray[count++].nu = 'mqtt://' + commonServiceEntity.host + '/' + applicationEntity.id + '?ct=json'; // mqtt
- //subscriptionArray[count++].nu = 'mqtt://' + commonServiceEntity.host + '/' + applicationEntity.id + '?ct=' + applicationEntity.bodytype; // mqtt
- //subscriptionArray[count++].nu = 'mqtt://' + commonServiceEntity.host + '/' + applicationEntity.id + '?rcn=9&ct=' + applicationEntity.bodytype; // mqtt
 
 config.commonServiceEntity = commonServiceEntity;
 config.applicationEntity = applicationEntity;
