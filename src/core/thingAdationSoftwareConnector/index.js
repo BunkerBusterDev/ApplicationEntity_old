@@ -5,19 +5,25 @@ import Twitter from 'twitter';
 import shortid from 'shortid';
 
 import config from 'config';
-import ContentInstance from 'core/httpConnector/contentInstance';
 
 let server = null;
+let ContentInstance = null;
 
 let socketBuffer = {};
 let thingAdationSoftwareBuffer = {};
+
+if(config.useProtocol === 'http') {
+    ContentInstance = require('core/httpConnector/contentInstance');
+} else if(config.useProtocol === 'mqtt') {
+    ContentInstance = require('core/mqttConnector/contentInstance');
+}
 
 async function thingAdationSoftwareConnectorHandler(data) {
     thingAdationSoftwareBuffer[this.id] += data.toString();
     let dataArray = thingAdationSoftwareBuffer[this.id].split('<EOF>');
 
     if(dataArray.length >= 2) {
-        for (let i=0; i<dataArray.length-1; i++) {
+        for(let i=0; i<dataArray.length-1; i++) {
             let line = dataArray[i];
 
             thingAdationSoftwareBuffer[this.id] = thingAdationSoftwareBuffer[this.id].replace(`${line}<EOF>`, '');
@@ -28,22 +34,20 @@ async function thingAdationSoftwareConnectorHandler(data) {
 
             socketBuffer[containerName] = this;
 
-            console.log(`----> got data for [${containerName}] from thingAdationSoftware ---->`);
+            console.log(`----> got data for[${containerName}] from thingAdationSoftware ---->`);
 
-            if (content === 'hello') {
+            if(content === 'hello') {
                 this.write(`${line}<EOF>`);
             }
             else {
-                if(initState === 'ready') {
-                    for(let j = 0; j < config.containerArray.length; j++) {
-                        if (config.containerArray[j].name === containerName) {
-                            let parent = config.containerArray[j].parent + '/' + containerName;
-                            try {
-                                await ContentInstance.createContentInstance(parent, content, this);
-                                break;
-                            } catch (error) {
-                                console.log(error);
-                            }
+                for(let j = 0; j < config.containerArray.length; j++) {
+                    if(config.containerArray[j].name === containerName) {
+                        let parent = config.containerArray[j].parent + '/' + containerName;
+                        try {
+                            await ContentInstance.createContentInstance(parent, content, this);
+                            break;
+                        } catch (error) {
+                            console.log(error);
                         }
                     }
                 }
@@ -62,7 +66,7 @@ exports.sendTweet = (conteintInstanceObject) => {
 
     const params = {screen_name: 'gbsmfather'};
     twitterClient.get('statuses/user_timeline', params, function(error, tweets, response){
-        if (!error) {
+        if(!error) {
             console.log(tweets[0].text);
         }
     });
@@ -72,14 +76,14 @@ exports.sendTweet = (conteintInstanceObject) => {
     currentDate.setHours(currentDate.getHours() + currentTimezoneOffset);
     const currentTime = currentDate.toISOString().replace(/\..+/, '');
 
-    const contentArray = (conteintInstanceObject.content != null ? conteintInstanceObject.content : conteintInstanceObject.content).split(',');
+    const contentArray = (conteintInstanceObject.content !== undefined ? conteintInstanceObject.content : conteintInstanceObject.content).split(',');
 
-    if (contentArray[contentArray.length-1] != null) {
+    if(contentArray[contentArray.length-1] !== undefined) {
         const bitmap = new Buffer(contentArray[contentArray.length-1], 'base64');
         fs.writeFileSync('decode.jpg', bitmap);
 
         twitterClient.post('media/upload', {media: bitmap}, function (error, media, response) {
-            if (error) {
+            if(error) {
                 console.log(error[0].message);
                 return;
             }
@@ -93,7 +97,7 @@ exports.sendTweet = (conteintInstanceObject) => {
             };
 
             twitterClient.post('statuses/update', status, function (error, tweet, response) {
-                if (!error) {
+                if(!error) {
                     console.log(tweet.text);
                 }
             });
@@ -104,25 +108,25 @@ exports.sendTweet = (conteintInstanceObject) => {
 exports.notification = (pathArray, conteintInstanceObject) => {
     let contentInstance = {};
     contentInstance.containerName = pathArray[pathArray.length-2];
-    contentInstance.content = (conteintInstanceObject.con != null) ? conteintInstanceObject.con : conteintInstanceObject.content;
+    contentInstance.content = (conteintInstanceObject.con !== undefined) ? conteintInstanceObject.con : conteintInstanceObject.content;
 
-    if(contentInstance.content == '') {
+    if(contentInstance.content === '') {
         console.log('---- is not contentInstance message');
     }
     else {
         console.log('<---- send to thingAdaptionSoftware');
 
-        if (socketBuffer[pathArray[pathArray.length-2]] != null) {
+        if(socketBuffer[pathArray[pathArray.length-2]] !== undefined) {
             socketBuffer[pathArray[pathArray.length-2]].write(JSON.stringify(contentInstance) + '<EOF>');
         }
     }
 };
 
-exports.initialize = () => {
+exports.start = () => {
     return new Promise((resolve, reject) => {
         try {
             server = net.createServer((socket) => {
-                console.log('[thingAdationSoftware/app] : thingAdationSoftware socket connected');
+                console.log('[thingAdationSoftware/app] : thingAdationSoftware socket connect');
 
                 socket.id = shortid.generate();
                 thingAdationSoftwareBuffer[socket.id] = '';
@@ -130,17 +134,19 @@ exports.initialize = () => {
                 socket.on('data', thingAdationSoftwareConnectorHandler);
                 socket.on('end', function() {
                     console.log('[thingAdationSoftware/app] : thingAdationSoftware socket end');
+                    socket.destroy();
                 });
                 socket.on('close', function() {
                     console.log('[thingAdationSoftware/app] : thingAdationSoftware socket close');
                 });
                 socket.on('error', function(error) {
                     console.log(`[thingAdationSoftware/app] : problem with tcp server: ${error.message}`);
+                    socket.destroy();
                 });
             });
 
             server.listen(config.applicationEntity.thingPort, () => {
-                console.log(`TCP Server (${ip.address()}) for things is listening on port ${config.applicationEntity.thingPort}`)
+                console.log(`TCP Server (${ip.address()}) forthings is listening on port ${config.applicationEntity.thingPort}`)
                 resolve({state: 'ready'});
             });
         } catch (error) {

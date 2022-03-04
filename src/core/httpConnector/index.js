@@ -3,15 +3,15 @@ import WatchdogTimer from 'lib/watchdogTimer';
 import ApplicationEntity from './applicationEntity';
 import Container from './container';
 import Subscription from './subscription';
-import HttpServerForNotification from 'core/httpServerForNotification'
+import Notification from 'core/notification'
 import ThingAdationSoftwareConnector from 'core/thingAdationSoftwareConnector'
 
-global.initState = 'create-applicationEntity';
+let initState = 'create-applicationEntity';
 
 exports.initialize = async () => {
     console.log(`[initState] : ${initState}`);
     try {
-        if (initState === 'create-applicationEntity') {
+        if(initState === 'create-applicationEntity') {
             const { state } = await ApplicationEntity.createApplicationEntity();
             initState = state;
         } else if(initState === 'retrieve-applicationEntity') {
@@ -27,13 +27,13 @@ exports.initialize = async () => {
             const { state } = await Subscription.createSubscriptionAll();
             initState = state;
         } else if(initState === 'start-httpServer') {
-            const { state } = await HttpServerForNotification.start();
+            const { state } = await Notification.start();
             initState = state;
         } else if(initState === 'start-tcpServer') {
-            const { state } = await ThingAdationSoftwareConnector.initialize();
+            const { state } = await ThingAdationSoftwareConnector.start();
             initState = state;
         } else if(initState === 'ready') {
-            console.log(`ADN-Application-Entity(${config.applicationEntity.name}) is initialized`)
+            console.log(`ApplicationEntity(${config.applicationEntity.name}) is initialized`)
             WatchdogTimer.deleteWatchdogTimer('httpConnector/initialize');
         }
     } catch (error) {
@@ -41,7 +41,7 @@ exports.initialize = async () => {
     }
 }
 
-global.restart = () => {
+exports.restart = function() {
     initState = 'create-applicationEntity';
     WatchdogTimer.setWatchdogTimer('httpConnector/initialize', 1, this.initialize);
 }

@@ -18,7 +18,7 @@ const request = (path, method, ...args) => {
             }
         };
     
-        if(args[1] != null) {
+        if(args[1] !== undefined) {
             options.headers['Content-Type'] = args[0];
             options.headers['Content-Length'] = args[1].length;
         }
@@ -33,12 +33,12 @@ const request = (path, method, ...args) => {
             response.on('end', function () {
                 try {
                     let responseBodyToJson = JSON.parse(responseBody);
-                    resolve({status: response.headers['x-m2m-rsc'], responseBody:responseBodyToJson});
+                    resolve({responseStatusCode: response.headers['x-m2m-rsc'], responseBody:responseBodyToJson});
                 } catch (error) {
                     console.log('[http/request] json parse error]');
                     let responseBodyToJson = {};
                     responseBodyToJson.dbg = responseBody;
-                    resolve({status: response.headers['x-m2m-rsc'], responseBody:responseBodyToJson});
+                    resolve({responseStatusCode: response.headers['x-m2m-rsc'], responseBody:responseBodyToJson});
                 }
             });
         });
@@ -47,7 +47,7 @@ const request = (path, method, ...args) => {
             reject(`[http/request] : problem with request: ${error.message}`);
         });
 
-        if(args[1] != null) {
+        if(args[1] !== undefined) {
             request.write(args[1])
         }
 
@@ -58,8 +58,8 @@ const request = (path, method, ...args) => {
 exports.get = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            request(path, 'get').then(({status, responseBody}) => {
-                resolve({status: status, responseBody: responseBody});
+            request(path, 'get').then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)
@@ -73,8 +73,8 @@ exports.post = (path, ty, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}${appendTy}`;
 
         try {
-            request(path, 'post', contentType, bodyString).then(({status, responseBody}) => {
-                resolve({status: status, responseBody: responseBody});
+            request(path, 'post', contentType, bodyString).then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error);
@@ -87,8 +87,8 @@ exports.put = (path, bodyString) => {
         const contentType = `application/vnd.onem2m-res+${config.applicationEntity.bodyType}`;
 
         try {
-            request(path, 'put', contentType, bodyString).then(({status, responseBody}) => {
-                resolve({status: status, responseBody: responseBody});
+            request(path, 'put', contentType, bodyString).then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)
@@ -99,8 +99,8 @@ exports.put = (path, bodyString) => {
 exports.delete = (path) => {
     return new Promise((resolve, reject) => {
         try {
-            request(path, 'delete').then(({status, responseBody}) => {
-                resolve({status: status, responseBody: responseBody});
+            request(path, 'delete').then(({responseStatusCode, responseBody}) => {
+                resolve({responseStatusCode: responseStatusCode, responseBody: responseBody});
             });
         } catch (error) {
             reject(error)
