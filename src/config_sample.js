@@ -1,5 +1,3 @@
-let ip = require("ip");
-
 let count = 0;
 let config = {};
 let commonServiceEntity = {};
